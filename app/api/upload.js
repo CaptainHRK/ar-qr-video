@@ -1,6 +1,9 @@
 import formidable from "formidable";
 import { v2 as cloudinary } from "cloudinary";
 
+/* 🔴 FORCE NODE RUNTIME */
+export const runtime = "nodejs";
+
 export const config = {
   api: {
     bodyParser: false,
@@ -19,7 +22,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const form = new formidable.IncomingForm({
+  const form = formidable({
     keepExtensions: true,
     multiples: false,
   });
@@ -32,7 +35,10 @@ export default async function handler(req, res) {
       });
     });
 
-    const file = files.video;
+    /* 🔴 Formidable may return array */
+    const file = Array.isArray(files.video)
+      ? files.video[0]
+      : files.video;
 
     if (!file || !file.filepath) {
       return res.status(400).json({ error: "No video file received" });
