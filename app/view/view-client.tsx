@@ -7,21 +7,40 @@ export default function ViewClient() {
   const src = params.get("src");
 
   if (!src) {
-    return <p style={{ padding: 20 }}>No video found</p>;
+    return <p style={{ padding: 20 }}>No media found</p>;
   }
 
+  const decodedSrc = decodeURIComponent(src);
+
+  /* 🔹 Detect image by file extension */
+  const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(decodedSrc);
+
   return (
-    <video
-      src={decodeURIComponent(src)}
-      autoPlay
-      loop
-      controls
-      playsInline
-      style={{
-        width: "100vw",
-        height: "100vh",
-        objectFit: "cover",
-      }}
-    />
+    <>
+      {isImage ? (
+        <img
+          src={decodedSrc}
+          alt="QR Media"
+          style={{
+            width: "100vw",
+            height: "100vh",
+            objectFit: "contain",
+          }}
+        />
+      ) : (
+        <video
+          src={decodedSrc}
+          autoPlay
+          loop
+          controls
+          playsInline
+          style={{
+            width: "100vw",
+            height: "100vh",
+            objectFit: "cover",
+          }}
+        />
+      )}
+    </>
   );
 }
