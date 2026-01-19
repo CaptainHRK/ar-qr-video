@@ -3,6 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 
 export const runtime = "nodejs";
 
+/* ENV CHECK (can be removed later if you want) */
 console.log("ENV CHECK:", {
   cloud: !!process.env.CLOUDINARY_CLOUD_NAME,
   key: !!process.env.CLOUDINARY_API_KEY,
@@ -32,7 +33,9 @@ export async function POST(req: Request) {
 
     const uploadResult: any = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
-        { resource_type: "video" },
+        {
+          resource_type: "auto", // ✅ FIX: supports BOTH image & video
+        },
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
@@ -42,7 +45,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({
-      videoUrl: uploadResult.secure_url,
+      videoUrl: uploadResult.secure_url, // unchanged to avoid frontend break
       publicId: uploadResult.public_id,
     });
   } catch (error: any) {
